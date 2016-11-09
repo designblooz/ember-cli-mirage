@@ -377,6 +377,7 @@ export default class Server {
   _removeCachedChildren(hasManyAssociations) {
     Object.keys(hasManyAssociations).forEach((hasMany)=> {
       hasManyAssociations[hasMany]._cachedChildren = null;
+    });
   }
 
   _defineRouteHandlerHelpers() {
