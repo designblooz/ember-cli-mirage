@@ -289,6 +289,56 @@ export default Model.extend({
 });
 ```
 
+*foreignKey*
+
+Someimes a `hasMany` inverse relationship can point to its own model with a defined foreign key. You can use `foreignKey` option to specify the property on its own model for the inverse relationship.
+
+**Mirage Models**
+
+```js
+// mirage/models/comment.js
+export default Model.extend({
+  blogPost: belongsTo(),
+  parentComment: belongsTo('comment'),
+  childComments: hasMany('comment', {
+    inverse: 'parentComment',
+    foreignKey: 'parentCommentId'
+  })
+});
+
+// mirage/models/blog-post.js
+export default Model.extend({
+  comments: hasMany(),
+});
+```
+
+**Ember Models**
+
+```js
+// app/models/blog-post.js
+export default DS.Model.extend({
+  title: DS.attr(),
+
+  comments: DS.hasMany(),
+  wordSmith: DS.belongsTo(),
+
+  parentComments: Ember.computed.filterBy('comments', 'parentComment', null)
+});
+
+// app/models/comment.js
+export default DS.Model.extend({
+  content: DS.attr(),
+
+  parentComment: DS.belongsTo('comment', {
+    async: false
+  }),
+  childComments: DS.hasMany('comment', {
+    inverse: 'parentComment',
+    async: false
+  })
+});
+```
+
 ### Building associations
 
 To create objects via factories that come with relationships (and related models) already built, you can use the `afterCreate()` hook when defining your factory. For details, check out the [factories documentation](../factories/#factories-and-relationships).
